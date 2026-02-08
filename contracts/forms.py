@@ -40,3 +40,21 @@ class ContractForm(forms.ModelForm):
 
     def clean_testemunha2_cpf(self):
         return self.clean_field_helper('testemunha2_cpf')
+
+    def clean_name_helper(self, field_name):
+        data = self.cleaned_data.get(field_name)
+        if data:
+            return data.title()
+        return data
+
+    def clean_locadora_nome(self):
+        return self.clean_name_helper('locadora_nome')
+
+    def clean_tenant_name(self):
+        return self.clean_name_helper('tenant_name')
+
+    def clean_testemunha1_name(self):
+        return self.clean_name_helper('testemunha1_name')
+
+    def clean_testemunha2_name(self):
+        return self.clean_name_helper('testemunha2_name')

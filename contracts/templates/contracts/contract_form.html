@@ -240,32 +240,58 @@
                 </div>
             </div>
 
-            <!-- Testemunhas -->
+            <!-- Assinatura e Testemunhas -->
             <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Assinatura e Testemunhas</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 1</label>
-                        <input type="text" name="testemunha1_cpf" value="{{ form.testemunha1_cpf.value|default:'' }}"
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-bold mb-2">Cidade da Assinatura</label>
+                        <input type="text" name="signature_city"
+                            value="{{ form.signature_city.value|default:'Rio de Janeiro' }}"
                             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 2</label>
-                        <input type="text" name="testemunha2_cpf" value="{{ form.testemunha2_cpf.value|default:'' }}"
-                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required>
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Nome Testemunha 1</label>
+                                <input type="text" name="testemunha1_name"
+                                    value="{{ form.testemunha1_name.value|default:'' }}"
+                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Nome Completo">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 1</label>
+                                <input type="text" name="testemunha1_cpf"
+                                    value="{{ form.testemunha1_cpf.value|default:'' }}"
+                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Nome Testemunha 2</label>
+                                <input type="text" name="testemunha2_name"
+                                    value="{{ form.testemunha2_name.value|default:'' }}"
+                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Nome Completo">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 2</label>
+                                <input type="text" name="testemunha2_cpf"
+                                    value="{{ form.testemunha2_cpf.value|default:'' }}"
+                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
-            </div>
 
-        </div>
-
-        <div class="flex justify-end mt-8">
-            <button type="submit"
-                class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300">
-                Gerar Contrato (PDF)
-            </button>
-        </div>
+                <div class="flex justify-end mt-8">
+                    <button type="submit"
+                        class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300">
+                        Gerar Contrato (PDF)
+                    </button>
+                </div>
     </form>
 </div>
 {% endblock %}

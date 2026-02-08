@@ -75,16 +75,27 @@
 
     <!-- 1. QUALIFICAÇÃO -->
     <p>
-        <b>NESTE ATO denominada LOCADORA:</b> {{ contract.locadora_nome }}, nacionalidade brasileira, CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }}, residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
+        <b>NESTE ATO denominada LOCADORA:</b> {{ contract.locadora_nome }}, nacionalidade brasileira,
+        CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }},
+        residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
     </p>
 
     <p>
-        <b>OUTRO LADO, denominado(a) LOCATÁRIO(A):</b> {{ contract.tenant_name }}, nacionalidade BRASILEIRA, CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}. Profissão: {{ contract.tenant_profession }}. Endereço
-        anterior: {{ contract.tenant_prev_address }}.
+        <b>OUTRO LADO, denominado(a) LOCATÁRIO(A):</b> {{ contract.tenant_name }}, nacionalidade BRASILEIRA,
+        CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}.
+        Profissão: {{ contract.tenant_profession }}.
+        Endereço anterior: {{ contract.tenant_prev_address }}.
     </p>
 
     <p>
-        O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }}, CEP: {{ contract.property_cep }}. O prazo de locação do imóvel mencionado acima terá validade de <b>{% if contract.contract_type == 'TIPICO' %}30 (trinta) meses{% else %}{{ contract.duration_months }} meses{% endif %}</b>, iniciando a partir da data de assinatura deste contrato.
+        O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }},
+        CEP: {{ contract.property_cep }}. O prazo de locação do imóvel mencionado acima terá validade de <b>
+            {% if contract.contract_type == 'TIPICO' %}
+            30 (trinta) meses
+            {% else %}
+            {{ contract.duration_months }} meses
+            {% endif %}
+        </b>, iniciando a partir da data de assinatura deste contrato.
     </p>
 
     {% if contract.contract_type == 'ATIPICO' %}
@@ -176,11 +187,10 @@
 
     {% if contract.contract_type == 'TIPICO' %}
     <p>
-        Ao(À) LOCATÁRIO(A) é facultada a rescisão unilateral do contrato após transcorridos 12 (doze) meses de vigência,
-        ficando isento(a) da cobrança de multa, desde que realize a notificação por escrito à LOCADORA com antecedência
-        mínima de 30 (trinta) dias. Caso o(a) LOCATÁRIO(A) opte pela rescisão antes de completado o prazo de 12 (doze)
-        meses, contados da data de assinatura, incidirá multa contratual no valor equivalente a 1 (um) mês de aluguel
-        vigente, calculada de forma proporcional, a qual poderá ser descontada do depósito de garantia.
+        É garantida a locação pelo prazo mínimo de 12 (doze) meses. A rescisão antes deste período implica em multa
+        equivalente a 1 (um) aluguel multiplicado pelos meses faltantes para completar os 12 meses, calculada de forma
+        proporcional (pro rata die). Após 12 meses, a rescisão é isenta de multa mediante aviso prévio de 30 (trinta)
+        dias.
     </p>
     {% else %}
     <p>
@@ -257,7 +267,7 @@
         </p>
         <p>
             <br /><br />
-            {{ cidade_assinatura }}, {{ data_assinatura|date:'d \d\e F \d\e Y' }}.
+            {{ contract.signature_city }}, {{ data_assinatura|date:'d \d\e F \d\e Y' }}.
         </p>
     </div>
 
@@ -284,7 +294,7 @@
 
     <div class="signature-block">
         <div class="signature-line"></div>
-        <p>Testemunha 2</p>
+        <p>{{ contract.testemunha2_name|default:'Testemunha 2' }}</p>
         <p>CPF: {{ contract.testemunha2_cpf }}</p>
     </div>
 

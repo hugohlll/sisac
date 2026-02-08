@@ -32,8 +32,7 @@ def generate_pdf(request, pk):
         'contract': contract,
         'deposit_p1': deposit_p1,
         'deposit_p2': deposit_p2,
-        'cidade_assinatura': 'São Paulo', 
-        'data_assinatura': datetime.date.today(),
+        'data_assinatura': contract.start_date,
     }
     
     html_string = render_to_string('contracts/pdf_template.html', context)

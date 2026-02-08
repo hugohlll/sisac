@@ -65,8 +65,12 @@ class Contract(models.Model):
     power_billing_type = models.CharField(max_length=20, choices=BILLING_TYPE_CHOICES, verbose_name="Cobrança de Energia")
     power_description = models.CharField(max_length=255, verbose_name="Descrição Energia", blank=True)
     
+    testemunha1_name = models.CharField(max_length=255, verbose_name="Nome Testemunha 1", default="")
     testemunha1_cpf = models.CharField(max_length=14, verbose_name="CPF Testemunha 1")
+    testemunha2_name = models.CharField(max_length=255, verbose_name="Nome Testemunha 2", default="")
     testemunha2_cpf = models.CharField(max_length=14, verbose_name="CPF Testemunha 2")
+    
+    signature_city = models.CharField(max_length=100, default='Rio de Janeiro', verbose_name="Cidade da Assinatura")
     
     created_at = models.DateTimeField(auto_now_add=True)
 
