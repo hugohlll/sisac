@@ -9,9 +9,11 @@ import datetime
 from .models import Contract
 from .services.calculator import calculate_deposit_installments
 
+from .forms import ContractForm
+
 class ContractCreateView(CreateView):
     model = Contract
-    fields = '__all__'
+    form_class = ContractForm
     template_name = 'contracts/contract_form.html'
     
     def get_success_url(self):

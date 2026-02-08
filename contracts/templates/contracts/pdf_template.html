@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Contrato de Locação</title>
@@ -7,174 +8,304 @@
         @page {
             size: A4;
             margin: 2.5cm;
+
             @bottom-right {
                 content: "Página " counter(page) " de " counter(pages);
+                font-family: "Helvetica", sans-serif;
+                font-size: 9pt;
+            }
+
+            @bottom-left {
+                content: "Contrato de Locação - {{ contract.tenant_name }} - {{ data_assinatura|date:'d/m/Y' }}";
+                font-family: "Helvetica", sans-serif;
+                font-size: 9pt;
             }
         }
+
         body {
-            font-family: "Times New Roman", serif;
-            font-size: 12pt;
+            font-family: "Helvetica", sans-serif;
+            font-size: 10pt;
             line-height: 1.5;
             text-align: justify;
         }
+
+        h1 {
+            font-family: "Helvetica-Bold", sans-serif;
+            font-size: 12pt;
+            text-align: center;
+            margin-bottom: 1cm;
+            text-transform: uppercase;
+        }
+
         h2 {
-            text-align: center;
+            font-family: "Helvetica-Bold", sans-serif;
+            font-size: 10pt;
+            margin-top: 0.5cm;
+            margin-bottom: 0.2cm;
             text-transform: uppercase;
-            margin-bottom: 30px;
         }
-        h3 {
-            text-transform: uppercase;
-            margin-top: 20px;
-            font-size: 14pt;
-        }
+
         p {
-            margin-bottom: 10px;
+            margin-bottom: 0.2cm;
         }
-        strong {
-            font-weight: bold;
-        }
-        .center {
+
+        .center-text {
             text-align: center;
+        }
+
+        .signature-line {
+            margin-top: 1.5cm;
+            border-top: 1px solid black;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .signature-block {
+            margin-top: 1cm;
+            text-align: center;
+            page-break-inside: avoid;
         }
     </style>
 </head>
+
 <body>
 
-    <h2>CONTRATO DE LOCAÇÃO RESIDENCIAL</h2>
+    <h1>CONTRATO DE LOCAÇÃO RESIDENCIAL</h1>
 
-    <h3>1. QUALIFICAÇÃO DAS PARTES</h3>
+    <!-- 1. QUALIFICAÇÃO -->
     <p>
-        <strong>LOCADORA:</strong> {{ contract.locadora_nome }}, nacionalidade brasileira, estado civil casada, CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }}, residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
-    </p>
-    <p>
-        <strong>LOCATÁRIO(A):</strong> {{ contract.tenant_name }}, nacionalidade brasileira, CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}, profissão: {{ contract.tenant_profession }}, residente anteriormente em: {{ contract.tenant_prev_address }}.
+        <b>NESTE ATO denominada LOCADORA:</b> {{ contract.locadora_nome }}, nacionalidade brasileira, CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }}, residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
     </p>
 
-    <h3>2. DO OBJETO E DA VIGÊNCIA</h3>
     <p>
-        O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }}, CEP: {{ contract.property_cep }}.
+        <b>OUTRO LADO, denominado(a) LOCATÁRIO(A):</b> {{ contract.tenant_name }}, nacionalidade BRASILEIRA, CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}. Profissão: {{ contract.tenant_profession }}. Endereço
+        anterior: {{ contract.tenant_prev_address }}.
     </p>
+
     <p>
-        O prazo de locação terá validade de <strong>{{ contract.duration_months }} meses</strong>, iniciando em {{ contract.start_date|date:"d/m/Y" }}.
+        O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }}, CEP: {{ contract.property_cep }}. O prazo de locação do imóvel mencionado acima terá validade de <b>{% if contract.contract_type == 'TIPICO' %}30 (trinta) meses{% else %}{{ contract.duration_months }} meses{% endif %}</b>, iniciando a partir da data de assinatura deste contrato.
     </p>
 
     {% if contract.contract_type == 'ATIPICO' %}
     <p>
-        O presente contrato é celebrado com prazo inferior a 30 meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com a legislação aplicável.
+        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
     </p>
     {% endif %}
 
     <p>
-        A presente LOCAÇÃO destina-se exclusivamente ao uso residencial.
+        A presente LOCAÇÃO destina-se ao uso do imóvel somente pra fins residenciais, ficando o(a) LOCATÁRIO(A)
+        proibido(a) de sublocá-lo ou usá-lo de forma diferente do previsto, sem a devida autorização do PROPRIETÁRIO ou
+        LOCADOR.
     </p>
 
-    <h3>3. ALUGUEL E ENCARGOS LOCATÍCIOS</h3>
     <p>
-        O(A) locatário(a) pagará o valor de <strong>R$ {{ contract.monthly_value }}</strong> referente ao aluguel, com vencimento todo dia <strong>{{ contract.payment_day }}</strong> de cada mês, referente ao mês vincendo.
+        Quaisquer alterações dos termos aqui dispostos só serão consideradas parte integrante deste contrato se
+        realizada pelas partes e de acordo com suas regras de utilização.
+    </p>
+
+    <!-- 2. ALUGUEL E ENCARGOS -->
+    <h2>ALUGUEL E ENCARGOS LOCATÍCIOS</h2>
+
+    <p>
+        O(A) locatário(a) pagará o valor de <b>R$ {{ contract.monthly_value }}</b> referente ao aluguel do imóvel, o
+        qual deverá ser pago antecipadamente até o dia <b>{{ contract.payment_day }}</b> de cada mês, referente ao mês
+        vincendo.
     </p>
 
     {% if contract.maintenance_fee > 0 %}
     <p>
-        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <strong>R$ {{ contract.maintenance_fee }}</strong>, paga mensalmente junto ao aluguel.
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
     </p>
     {% endif %}
 
     <p>
-        <strong>Garantia Locatícia:</strong> Será depositado a título de caução o valor de <strong>R$ {{ contract.total_security_deposit }}</strong> (equivalente a {{ contract.security_deposit_months }} meses de aluguel).
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
+        aluguel.
+        {% if contract.security_deposit_payment_type == 'VISTA' %}
+        O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
+        {% else %}
+        O pagamento será realizado da seguinte forma:<br />
+        a) O valor correspondente a 1,5 (um e meio) aluguel (R$ {{ deposit_p1 }}) será pago no ato da assinatura deste
+        contrato, a título de primeira parcela da caução.<br />
+        b) O valor restante de 0,5 (meio) aluguel (R$ {{ deposit_p2 }}) será pago juntamente com a mensalidade do
+        segundo mês de vigência do contrato, quitando o total da garantia.
+        {% endif %}
     </p>
 
-    {% if contract.security_deposit_payment_type == 'VISTA' %}
     <p>
-        O pagamento integral do depósito será realizado no ato da assinatura.
-    </p>
-    {% else %}
-    <p>
-        O pagamento será parcelado: R$ {{ deposit_p1 }} no ato da assinatura e R$ {{ deposit_p2 }} no segundo mês de vigência.
-    </p>
-    {% endif %}
-
-    <p>
-        O reajuste será anual com base no IPCA. Em caso de atraso, incidirá multa de 10% sobre o débito. A inadimplência superior a 25 dias resultará em rescisão imediata e desocupação.
+        O valor nominal do aluguel poderá sofrer reajuste anual, de acordo com o Índice Nacional de Preços ao Consumidor
+        Amplo (IPCA). No caso de atraso no pagamento do aluguel, será cobrada multa de 10% (dez por cento) sobre o valor
+        total devido.
     </p>
 
-    <h3>4. UTILIDADE PÚBLICA (ÁGUA E ENERGIA)</h3>
-    
+    <p>
+        A inadimplência do pagamento do aluguel por 25 (vinte e cinco) dias seguidos terá como consequência o
+        cancelamento deste contrato e a desocupação imediata do imóvel, sem o benefício do ressarcimento do depósito.
+    </p>
+
+    <!-- 3. CLÁUSULAS GERAIS -->
+
     {% if contract.water_billing_type == 'INCLUSO' and contract.power_billing_type == 'INCLUSO' %}
     <p>
-        Não haverá cobrança de taxas de consumo de água ou energia elétrica, estando inclusos no valor do aluguel.
+        Não haverá cobrança de taxa referente à cota de consumo de água ou energia elétrica por parte da LOCADORA,
+        estando estes itens inclusos no valor do aluguel.
     </p>
     {% else %}
     <p>
-        Os serviços serão cobrados da seguinte forma:
+        Os valores de serviços de utilidade pública serão cobrados da seguinte forma: o(a) LOCATÁRIO(A) pagará à
+        LOCADORA
+        {% if contract.water_billing_type == 'FIXO' %} um valor fixo referente à água e esgoto{% endif %}
+        {% if contract.water_billing_type == 'CONTA' %} o valor integral da fatura de água e esgoto{% endif %}
+        {% if contract.water_billing_type == 'INCLUSO' %} (água inclusa){% endif %}
+        , e
+        {% if contract.power_billing_type == 'FIXO' %} um valor fixo referente à energia elétrica{% endif %}
+        {% if contract.power_billing_type == 'CONTA' %} o valor integral da fatura de energia elétrica{% endif %}
+        {% if contract.power_billing_type == 'INCLUSO' %} (energia inclusa){% endif %}
+        .
+        {% if contract.water_description %} Detalhes Água: {{ contract.water_description }}.{% endif %}
+        {% if contract.power_description %} Detalhes Energia: {{ contract.power_description }}.{% endif %}
+        Não haverá cobrança referente a cota condominial.
     </p>
-    <ul>
-        <li><strong>Água:</strong> {{ contract.water_description }}</li>
-        <li><strong>Energia:</strong> {{ contract.power_description }}</li>
-    </ul>
     {% endif %}
 
     <p>
-        Fica proibido o uso de aparelhos elétricos com resistência (ex: aquecedores). O descumprimento gera multa de 1 aluguel.
+        Não será permitido nenhum uso de aparelho elétrico que contenha resistência. O descumprimento dessa cláusula
+        acarretará à uma multa de 1 aluguel e/ou cancelamento do contrato.
     </p>
-
-    <h3>5. BENFEITORIAS E VISTORIAS</h3>
-    <p>
-        As condições do imóvel na entrada estão detalhadas no <strong>Anexo I - Vistoria de Entrada</strong>. Qualquer divergência deve ser apontada em 5 dias. Benfeitorias dependem de autorização prévia por escrito e não geram direito a retenção ou indenização. O(A) locatário(a) deve reparar danos causados por si ou visitantes.
-    </p>
-
-    <h3>6. RESCISÃO E MULTA CONTRATUAL</h3>
 
     {% if contract.contract_type == 'TIPICO' %}
     <p>
-        <strong>Contrato Típico (30 meses):</strong>
-    </p>
-    <p>
-        Ao(À) LOCATÁRIO(A) é facultada a rescisão unilateral após transcorridos <strong>12 (doze) meses</strong> de vigência, com isenção de multa, mediante aviso prévio de 30 dias.
-    </p>
-    <p>
-        Caso a rescisão ocorra <strong>antes do 12º mês</strong>, o(a) LOCATÁRIO(A) deverá pagar multa equivalente ao <strong>somatório dos aluguéis restantes para completar o 12º mês de contrato</strong> (calculado <em>pro-rata die</em>), valor este que poderá ser descontado da garantia.
+        Ao(À) LOCATÁRIO(A) é facultada a rescisão unilateral do contrato após transcorridos 12 (doze) meses de vigência,
+        ficando isento(a) da cobrança de multa, desde que realize a notificação por escrito à LOCADORA com antecedência
+        mínima de 30 (trinta) dias. Caso o(a) LOCATÁRIO(A) opte pela rescisão antes de completado o prazo de 12 (doze)
+        meses, contados da data de assinatura, incidirá multa contratual no valor equivalente a 1 (um) mês de aluguel
+        vigente, calculada de forma proporcional, a qual poderá ser descontada do depósito de garantia.
     </p>
     {% else %}
     <p>
-        <strong>Contrato Atípico:</strong>
-    </p>
-    <p>
-        Em caso de rescisão antecipada, incidirá multa contratual proporcional ao período restante do contrato, mediante aviso prévio de 30 dias.
+        Caso o(a) LOCATÁRIO(A) opte pela rescisão unilateral do contrato antes do término do prazo de vigência
+        estipulado, incidirá multa contratual no valor equivalente a 1 (um) mês de aluguel vigente, calculada de forma
+        proporcional ao período restante do contrato, a qual poderá ser descontada do depósito de garantia. A
+        notificação de rescisão deverá ser feita por escrito à LOCADORA com antecedência mínima de 30 (trinta) dias.
     </p>
     {% endif %}
 
-    <h3>7. DISPOSIÇÕES FINAIS E ASSINATURAS</h3>
+    <h2>BENFEITORIAS E VISTORIAS</h2>
     <p>
-        As partes aceitam assinaturas eletrônicas via plataformas autorizadas pela ICP-Brasil.
-    </p>
-    <p>
-        {{ cidade_assinatura|default:"São Paulo" }}, {{ data_assinatura|date:"d/m/Y" }}.
+        Serão feitas vistorias de entrada e saída para registrar as condições do imóvel no início e no fim da locação.
+        As condições do imóvel na entrada estão detalhadas no <b>Anexo I - Vistoria de Entrada</b>, o qual é parte
+        integrante deste contrato e aceito pelo(a) LOCATÁRIO(A) nas condições ali descritas, sem ressalvas. Caso uma
+        parte encontre qualquer divergência, deverá apontá-la e comprová-la com fotos, no prazo de 5 (cinco) dias do
+        recebimento do laudo de vistoria, sob pena de aceitar integralmente a vistoria apresentada. A modificação ou
+        benfeitoria no imóvel, quando que necessário ou útil, não poderá ser feita pelo(a) locatário(a) sem a prévia e
+        expressa autorização do locador, por escrito, com detalhamento de todo o processo. A realização de qualquer
+        benfeitoria não gerará reembolso ou qualquer retenção. O(A) locatário(a) deverá reparar prontamente os danos
+        causados ao imóvel, às suas instalações, desde que ocasionado pelo(a) locatário(a), demais moradores, familiares
+        ou demais visitantes, independentemente de culpa. O locador terá responsabilidade de reparar danos aparentes do
+        imóvel anteriores ao início da locação quando afetarem a habitabilidade do imóvel.
     </p>
 
-    <br><br>
-    
-    <p class="center">
-        __________________________________________<br>
-        <strong>{{ contract.locadora_nome }}</strong><br>
-        (LOCADORA)
-    </p>
-    <br>
-    <p class="center">
-        __________________________________________<br>
-        <strong>{{ contract.tenant_name }}</strong><br>
-        (LOCATÁRIO/A)
+    <h2>ENTREGA DAS CHAVES</h2>
+    <p>
+        O(A) LOCATÁRIO(A) terá o prazo de 5 (cinco) dias corridos, a contar da data de assinatura do presente contrato,
+        para realizar a retirada das chaves do imóvel. A não retirada das chaves dentro do prazo estipulado implicará na
+        anulação automática do contrato, sem qualquer ônus para a LOCADORA.
     </p>
 
-    <br>
+    <h2>TITULARIDADE E SERVIÇOS DE UTILIDADE PÚBLICA</h2>
     <p>
-        <strong>Testemunhas:</strong>
+        <b>Ver acima (Consolidado nas cláusulas anteriores).</b>
     </p>
+
+    <h2>REGRAS DE CONVIVÊNCIA</h2>
     <p>
-        1. ____________________ CPF: {{ contract.testemunha1_cpf }}
+        O(A) LOCATÁRIO(A) declara-se ciente e concorda em obedecer às regras de convivência do imóvel, comuns a todos os
+        moradores, as quais foram informadas e aceitas no ato da assinatura deste contrato. O descumprimento de tais
+        regras poderá implicar nas sanções previstas no regimento interno ou, em casos graves, na rescisão do presente
+        contrato.
     </p>
+
+    <h2>DEVOLUÇÃO DO IMÓVEL</h2>
     <p>
-        2. ____________________ CPF: {{ contract.testemunha2_cpf }}
+        Ao término da locação, o(a) locatário(a) deverá restituir ao locador o imóvel livre de pessoas e bens, e nas
+        mesmas condições que o alugou e que foram registradas na vistoria de entrada. O(A) locatário(a) deverá notificar
+        o locador previamente para realização de vistoria de saída, com objetivo de comprovar a desocupação do imóvel
+        nas mesmas condições em que o recebeu. Caso o(a) locatário(a) não devolva o imóvel nas mesmas condições em que o
+        recebeu, o(a) mesmo(a) terá o prazo adicional de 7 (sete) dias, contados do recebimento da notificação nesse
+        sentido, para fazer todos os reparos necessários. Caso o(a) locatário(a) não faça a integralidade dos reparos
+        nesse prazo, o locador fará os reparos, podendo ser descontado do valor dado como depósito. Tendo em vista que
+        o(a) locatário(a) apresentou garantia em espécie no valor de 1 (um) aluguel, esse valor será devolvido ao final
+        do contrato, descontando as devidas reformas e reparos necessários, com apresentação de notas fiscais de
+        materiais e mão-de-obra.
+    </p>
+
+    <h2>DISPOSIÇÕES FINAIS</h2>
+    <p>
+        As partes estão cientes e de acordo que devem manter cadastro atualizado (telefone, e-mail, etc); Caso haja
+        mudança de meios de contato sem a devida atualização, todas as comunicações enviadas para os contatos que as
+        partes forneceram serão consideradas válidas para todos os efeitos legais. Assinatura Eletrônica: As Partes
+        acordam que o envio de páginas de assinaturas no formato PDF e/ou as assinaturas eletrônicas do presente
+        Contrato, por meio de plataformas de assinatura eletrônica, devidamente autorizadas pela Infraestrutura de
+        Chaves Públicas Brasileira - ICP-Brasil (e.g., Docusign), serão consideradas válidas, sendo o Contrato
+        considerado executável, válido e vigente entre as Partes.
+    </p>
+
+    <div class="center-text">
+        <p>
+            DECLARANDO AMBAS AS PARTES DE ACORDO COM TODO O CONTEXTO DESSE CONTRATO, DATAM E ASSINAM.
+        </p>
+        <p>
+            <br /><br />
+            {{ cidade_assinatura }}, {{ data_assinatura|date:'d \d\e F \d\e Y' }}.
+        </p>
+    </div>
+
+    <!-- SIGNATURES -->
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <p>{{ contract.locadora_nome }}</p>
+        <p>LOCADORA</p>
+    </div>
+
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <p>{{ contract.tenant_name }}</p>
+        <p>LOCATÁRIO(A)</p>
+    </div>
+
+    <p style="margin-top: 1cm; text-align: center;"><b>Testemunhas:</b></p>
+
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <p>{{ contract.testemunha1_name|default:'Testemunha 1' }}</p>
+        <p>CPF: {{ contract.testemunha1_cpf }}</p>
+    </div>
+
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <p>Testemunha 2</p>
+        <p>CPF: {{ contract.testemunha2_cpf }}</p>
+    </div>
+
+    <!-- Page Break for Anexo -->
+    <div style="page-break-before: always;"></div>
+    <h1 style="text-align: center;">ANEXO I - VISTORIA DE ENTRADA</h1>
+    <p>
+        O(A) LOCATÁRIO(A) declara, neste ato, que vistoriou o imóvel objeto deste contrato de locação e o aceita nas
+        condições em que se encontra, conforme registrado em fotos anexadas e descrições a seguir. O(A) LOCATÁRIO(A) se
+        compromete a devolver o imóvel nas mesmas condições de conservação, ressalvados o desgaste natural pelo uso
+        normal.
+    </p>
+
+    <p style="text-align: center; font-style: italic; margin-top: 2cm;">
+        (Fotos da Vistoria serão anexadas aqui automaticamente se disponíveis no sistema)
+    </p>
+
+    <p style="margin-top: 2cm;">
+        <i>(Este anexo foi aceito e assinado digitalmente/eletronicamente junto ao contrato principal.)</i>
     </p>
 
 </body>
+
 </html>
