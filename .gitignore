@@ -28,3 +28,16 @@ venv.bak/
 # OS
 .DS_Store
 Thumbs.db
+
+# Project Documentation (Local only)
+PROD.md
+SPEC.md
+TEMPL.md
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# Temporary / Scripts
+fix_template_v2.py
+test_sync.txt
