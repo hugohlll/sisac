@@ -22,4 +22,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . /app/
 
-CMD ["sh", "-c", "python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:10000"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:10000"]
