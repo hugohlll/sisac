@@ -1,14 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.template.loader import render_to_string
 from django.views.generic import CreateView, DetailView
 from django.urls import reverse_lazy
-from weasyprint import HTML
-import datetime
-
+from generator.render import render_pdf
 from .models import Contract
 from .services.calculator import calculate_deposit_installments
-
 from .forms import ContractForm
 
 class ContractCreateView(CreateView):
@@ -35,11 +31,6 @@ def generate_pdf(request, pk):
         'data_assinatura': contract.start_date,
     }
     
-    html_string = render_to_string('contracts/pdf_template.html', context)
-    
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="contrato_{contract.tenant_name}.pdf"'
-    
-    HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(response)
-    
-    return response
+    filename = f'contrato_{contract.tenant_name}.pdf'
+    return render_pdf('contracts/pdf_template.html', context, filename, request.build_absolute_uri())
+
