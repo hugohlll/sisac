@@ -1,0 +1,271 @@
+{% extends 'contracts/base.html' %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Emitir Novo Contrato</h2>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <strong class="font-bold">Erro!</strong>
+            <span class="block sm:inline">Por favor corrija os erros abaixo.</span>
+            <ul>
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Locadora -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3">Dados da Locadora</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Nome Completo</label>
+                        {{ form.locadora_nome.errors }}
+                        <input type="text" name="locadora_nome" value="{{ form.locadora_nome.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">CPF</label>
+                        {{ form.locadora_cpf.errors }}
+                        <input type="text" name="locadora_cpf" value="{{ form.locadora_cpf.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required placeholder="000.000.000-00">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">RG</label>
+                        {{ form.locadora_rg.errors }}
+                        <input type="text" name="locadora_rg" value="{{ form.locadora_rg.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Endereço</label>
+                        {{ form.locadora_endereco.errors }}
+                        <input type="text" name="locadora_endereco"
+                            value="{{ form.locadora_endereco.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locatário -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Dados do Locatário</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Nome Completo</label>
+                        {{ form.tenant_name.errors }}
+                        <input type="text" name="tenant_name" value="{{ form.tenant_name.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">CPF</label>
+                        {{ form.tenant_cpf.errors }}
+                        <input type="text" name="tenant_cpf" value="{{ form.tenant_cpf.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">RG</label>
+                        {{ form.tenant_rg.errors }}
+                        <input type="text" name="tenant_rg" value="{{ form.tenant_rg.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Profissão</label>
+                        {{ form.tenant_profession.errors }}
+                        <input type="text" name="tenant_profession"
+                            value="{{ form.tenant_profession.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-bold mb-2">Endereço Anterior</label>
+                        {{ form.tenant_prev_address.errors }}
+                        <textarea name="tenant_prev_address"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows="2">{{ form.tenant_prev_address.value|default:'' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imovel -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Dados do Imóvel</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-bold mb-2">Endereço do Imóvel da Locação</label>
+                        <textarea name="property_address"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows="2">{{ form.property_address.value|default:'' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">CEP</label>
+                        <input type="text" name="property_cep" value="{{ form.property_cep.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financeiro -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Financeiro e Prazos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Valor Mensal (R$)</label>
+                        <input type="number" step="0.01" name="monthly_value"
+                            value="{{ form.monthly_value.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Dia do Pagamento</label>
+                        <input type="number" name="payment_day" value="{{ form.payment_day.value|default:'10' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Data de Início</label>
+                        <input type="date" name="start_date" value="{{ form.start_date.value|date:'Y-m-d' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Duração (Meses)</label>
+                        <input type="number" name="duration_months"
+                            value="{{ form.duration_months.value|default:'30' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Tipo de Contrato</label>
+                        <select name="contract_type"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="TIPICO">Típico (30 meses)</option>
+                            <option value="ATIPICO">Atípico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Justificativa (se Atípico)</label>
+                        <input type="text" name="justification_atipico"
+                            value="{{ form.justification_atipico.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garantia -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Garantia</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Meses de Caução</label>
+                        <input type="number" name="security_deposit_months"
+                            value="{{ form.security_deposit_months.value|default:'3' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Pagamento da Caução</label>
+                        <select name="security_deposit_payment_type"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="VISTA">À Vista</option>
+                            <option value="PARCELADO">Parcelado (1.5x + 0.5x)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Encargos -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-lg font-semibold text-blue-600 mb-3 border-t pt-4">Encargos e Testemunhas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Taxa de Manutenção (R$)</label>
+                        <input type="number" step="0.01" name="maintenance_fee"
+                            value="{{ form.maintenance_fee.value|default:'0' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="hidden"></div>
+
+                    <!-- Agua -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Cobrança de Água</label>
+                        <select name="water_billing_type"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="INCLUSO">Incluso</option>
+                            <option value="FIXO">Valor Fixo</option>
+                            <option value="CONTA">Conta Individual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Descrição Água</label>
+                        <input type="text" name="water_description"
+                            value="{{ form.water_description.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Energia -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Cobrança de Energia</label>
+                        <select name="power_billing_type"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="INCLUSO">Incluso</option>
+                            <option value="FIXO">Valor Fixo</option>
+                            <option value="CONTA">Conta Individual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Descrição Energia</label>
+                        <input type="text" name="power_description"
+                            value="{{ form.power_description.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testemunhas -->
+            <div class="col-span-1 md:col-span-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 1</label>
+                        <input type="text" name="testemunha1_cpf" value="{{ form.testemunha1_cpf.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">CPF Testemunha 2</label>
+                        <input type="text" name="testemunha2_cpf" value="{{ form.testemunha2_cpf.value|default:'' }}"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex justify-end mt-8">
+            <button type="submit"
+                class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300">
+                Gerar Contrato (PDF)
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

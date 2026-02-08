@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrato de Locação</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+            }
+        }
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        h2 {
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+        h3 {
+            text-transform: uppercase;
+            margin-top: 20px;
+            font-size: 14pt;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        strong {
+            font-weight: bold;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>CONTRATO DE LOCAÇÃO RESIDENCIAL</h2>
+
+    <h3>1. QUALIFICAÇÃO DAS PARTES</h3>
+    <p>
+        <strong>LOCADORA:</strong> {{ contract.locadora_nome }}, nacionalidade brasileira, estado civil casada, CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }}, residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
+    </p>
+    <p>
+        <strong>LOCATÁRIO(A):</strong> {{ contract.tenant_name }}, nacionalidade brasileira, CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}, profissão: {{ contract.tenant_profession }}, residente anteriormente em: {{ contract.tenant_prev_address }}.
+    </p>
+
+    <h3>2. DO OBJETO E DA VIGÊNCIA</h3>
+    <p>
+        O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }}, CEP: {{ contract.property_cep }}.
+    </p>
+    <p>
+        O prazo de locação terá validade de <strong>{{ contract.duration_months }} meses</strong>, iniciando em {{ contract.start_date|date:"d/m/Y" }}.
+    </p>
+
+    {% if contract.contract_type == 'ATIPICO' %}
+    <p>
+        O presente contrato é celebrado com prazo inferior a 30 meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com a legislação aplicável.
+    </p>
+    {% endif %}
+
+    <p>
+        A presente LOCAÇÃO destina-se exclusivamente ao uso residencial.
+    </p>
+
+    <h3>3. ALUGUEL E ENCARGOS LOCATÍCIOS</h3>
+    <p>
+        O(A) locatário(a) pagará o valor de <strong>R$ {{ contract.monthly_value }}</strong> referente ao aluguel, com vencimento todo dia <strong>{{ contract.payment_day }}</strong> de cada mês, referente ao mês vincendo.
+    </p>
+
+    {% if contract.maintenance_fee > 0 %}
+    <p>
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <strong>R$ {{ contract.maintenance_fee }}</strong>, paga mensalmente junto ao aluguel.
+    </p>
+    {% endif %}
+
+    <p>
+        <strong>Garantia Locatícia:</strong> Será depositado a título de caução o valor de <strong>R$ {{ contract.total_security_deposit }}</strong> (equivalente a {{ contract.security_deposit_months }} meses de aluguel).
+    </p>
+
+    {% if contract.security_deposit_payment_type == 'VISTA' %}
+    <p>
+        O pagamento integral do depósito será realizado no ato da assinatura.
+    </p>
+    {% else %}
+    <p>
+        O pagamento será parcelado: R$ {{ deposit_p1 }} no ato da assinatura e R$ {{ deposit_p2 }} no segundo mês de vigência.
+    </p>
+    {% endif %}
+
+    <p>
+        O reajuste será anual com base no IPCA. Em caso de atraso, incidirá multa de 10% sobre o débito. A inadimplência superior a 25 dias resultará em rescisão imediata e desocupação.
+    </p>
+
+    <h3>4. UTILIDADE PÚBLICA (ÁGUA E ENERGIA)</h3>
+    
+    {% if contract.water_billing_type == 'INCLUSO' and contract.power_billing_type == 'INCLUSO' %}
+    <p>
+        Não haverá cobrança de taxas de consumo de água ou energia elétrica, estando inclusos no valor do aluguel.
+    </p>
+    {% else %}
+    <p>
+        Os serviços serão cobrados da seguinte forma:
+    </p>
+    <ul>
+        <li><strong>Água:</strong> {{ contract.water_description }}</li>
+        <li><strong>Energia:</strong> {{ contract.power_description }}</li>
+    </ul>
+    {% endif %}
+
+    <p>
+        Fica proibido o uso de aparelhos elétricos com resistência (ex: aquecedores). O descumprimento gera multa de 1 aluguel.
+    </p>
+
+    <h3>5. BENFEITORIAS E VISTORIAS</h3>
+    <p>
+        As condições do imóvel na entrada estão detalhadas no <strong>Anexo I - Vistoria de Entrada</strong>. Qualquer divergência deve ser apontada em 5 dias. Benfeitorias dependem de autorização prévia por escrito e não geram direito a retenção ou indenização. O(A) locatário(a) deve reparar danos causados por si ou visitantes.
+    </p>
+
+    <h3>6. RESCISÃO E MULTA CONTRATUAL</h3>
+
+    {% if contract.contract_type == 'TIPICO' %}
+    <p>
+        <strong>Contrato Típico (30 meses):</strong>
+    </p>
+    <p>
+        Ao(À) LOCATÁRIO(A) é facultada a rescisão unilateral após transcorridos <strong>12 (doze) meses</strong> de vigência, com isenção de multa, mediante aviso prévio de 30 dias.
+    </p>
+    <p>
+        Caso a rescisão ocorra <strong>antes do 12º mês</strong>, o(a) LOCATÁRIO(A) deverá pagar multa equivalente ao <strong>somatório dos aluguéis restantes para completar o 12º mês de contrato</strong> (calculado <em>pro-rata die</em>), valor este que poderá ser descontado da garantia.
+    </p>
+    {% else %}
+    <p>
+        <strong>Contrato Atípico:</strong>
+    </p>
+    <p>
+        Em caso de rescisão antecipada, incidirá multa contratual proporcional ao período restante do contrato, mediante aviso prévio de 30 dias.
+    </p>
+    {% endif %}
+
+    <h3>7. DISPOSIÇÕES FINAIS E ASSINATURAS</h3>
+    <p>
+        As partes aceitam assinaturas eletrônicas via plataformas autorizadas pela ICP-Brasil.
+    </p>
+    <p>
+        {{ cidade_assinatura|default:"São Paulo" }}, {{ data_assinatura|date:"d/m/Y" }}.
+    </p>
+
+    <br><br>
+    
+    <p class="center">
+        __________________________________________<br>
+        <strong>{{ contract.locadora_nome }}</strong><br>
+        (LOCADORA)
+    </p>
+    <br>
+    <p class="center">
+        __________________________________________<br>
+        <strong>{{ contract.tenant_name }}</strong><br>
+        (LOCATÁRIO/A)
+    </p>
+
+    <br>
+    <p>
+        <strong>Testemunhas:</strong>
+    </p>
+    <p>
+        1. ____________________ CPF: {{ contract.testemunha1_cpf }}
+    </p>
+    <p>
+        2. ____________________ CPF: {{ contract.testemunha2_cpf }}
+    </p>
+
+</body>
+</html>

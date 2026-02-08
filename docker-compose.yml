@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-sac-dev-key
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - DATABASE_ENGINE=django.db.backends.postgresql
+      - DATABASE_NAME=sac_db
+      - DATABASE_USER=sac_user
+      - DATABASE_PASSWORD=sac_password
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=sac_db
+      - POSTGRES_USER=sac_user
+      - POSTGRES_PASSWORD=sac_password
+
+volumes:
+  postgres_data:
