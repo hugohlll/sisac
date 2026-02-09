@@ -19,4 +19,7 @@ class Command(BaseCommand):
             User.objects.create_superuser(username=username, email=email, password=password)
             self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" created successfully'))
         else:
-            self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" already exists'))
+            u = User.objects.get(username=username)
+            u.set_password(password)
+            u.save()
+            self.stdout.write(self.style.SUCCESS(f'Superuser "{username}" already exists. Password updated from environment variable.'))
