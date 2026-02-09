@@ -54,15 +54,19 @@ class Contract(models.Model):
     # Encargos Extras
     maintenance_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Taxa de Manutenção")
     
-    BILLING_TYPE_CHOICES = [
+    WATER_BILLING_CHOICES = [
+        ('INCLUSO', 'Incluso no Aluguel'),
+        ('FIXO', 'Valor Fixo'),
+    ]
+    water_billing_type = models.CharField(max_length=20, choices=WATER_BILLING_CHOICES, verbose_name="Cobrança de Água")
+    water_description = models.CharField(max_length=255, verbose_name="Descrição Água", blank=True)
+    
+    POWER_BILLING_CHOICES = [
         ('INCLUSO', 'Incluso no Aluguel'),
         ('FIXO', 'Valor Fixo'),
         ('CONTA', 'Conta Individual'),
     ]
-    water_billing_type = models.CharField(max_length=20, choices=BILLING_TYPE_CHOICES, verbose_name="Cobrança de Água")
-    water_description = models.CharField(max_length=255, verbose_name="Descrição Água", blank=True)
-    
-    power_billing_type = models.CharField(max_length=20, choices=BILLING_TYPE_CHOICES, verbose_name="Cobrança de Energia")
+    power_billing_type = models.CharField(max_length=20, choices=POWER_BILLING_CHOICES, verbose_name="Cobrança de Energia")
     power_description = models.CharField(max_length=255, verbose_name="Descrição Energia", blank=True)
     
     testemunha1_name = models.CharField(max_length=255, verbose_name="Nome Testemunha 1", default="")

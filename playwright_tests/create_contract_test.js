@@ -52,8 +52,8 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:8000';
 
         // Fill Extra Charges
         await page.fill('input[name="maintenance_fee"]', '150.00');
-        await page.selectOption('select[name="water_billing_type"]', 'INCLUSO');
-        await page.selectOption('select[name="power_billing_type"]', 'CONTA');
+        await page.check('input[name="water_billing_type"][value="INCLUSO"]');
+        await page.check('input[name="power_billing_type"][value="CONTA"]');
 
         // Fill Witnesses
         await page.fill('input[name="testemunha1_name"]', 'Testemunha Um');

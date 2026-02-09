@@ -128,14 +128,12 @@
 
     {% if contract.maintenance_fee > 0 %}
     <p>
-        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{
-            contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
     </p>
     {% endif %}
 
     <p>
-        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
-        aluguel.
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de aluguel.
         {% if contract.security_deposit_payment_type == 'VISTA' %}
         O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
         {% else %}
@@ -169,14 +167,18 @@
     <p>
         Os valores de serviços de utilidade pública serão cobrados da seguinte forma: o(a) LOCATÁRIO(A) pagará à
         LOCADORA
+
+        <!-- Água -->
         {% if contract.water_billing_type == 'FIXO' %} um valor fixo referente à água e esgoto{% endif %}
-        {% if contract.water_billing_type == 'CONTA' %} o valor integral da fatura de água e esgoto{% endif %}
         {% if contract.water_billing_type == 'INCLUSO' %} (água inclusa){% endif %}
         , e
+
+        <!-- Energia -->
         {% if contract.power_billing_type == 'FIXO' %} um valor fixo referente à energia elétrica{% endif %}
         {% if contract.power_billing_type == 'CONTA' %} o valor integral da fatura de energia elétrica{% endif %}
         {% if contract.power_billing_type == 'INCLUSO' %} (energia inclusa){% endif %}
         .
+
         {% if contract.water_description %} Detalhes Água: {{ contract.water_description }}.{% endif %}
         {% if contract.power_description %} Detalhes Energia: {{ contract.power_description }}.{% endif %}
         Não haverá cobrança referente a cota condominial.

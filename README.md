@@ -53,8 +53,10 @@ O **SAC** é uma aplicação web desenvolvida para padronizar a emissão de cont
 
 2. Suba o ambiente com Docker Compose:
    ```bash
+   ```bash
    docker compose up -d
    ```
+   > **Nota:** Utilize a flag `--build` apenas se houver alterações no `Dockerfile` ou em `requirements.txt`. Para alterações de código/templates, o volume montado já reflete as mudanças automaticamente.
 
 3. Execute as migrações do banco de dados:
    ```bash

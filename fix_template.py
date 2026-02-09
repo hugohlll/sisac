@@ -1,4 +1,5 @@
-{% extends 'contracts/base.html' %}
+
+content = r"""{% extends 'contracts/base.html' %}
 
 {% block content %}
 <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
@@ -339,3 +340,8 @@
     });
 </script>
 {% endblock %}
+"""
+
+with open("contracts/templates/contracts/contract_form.html", "w") as f:
+    f.write(content)
+print("File rewritten.")
