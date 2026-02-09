@@ -1,3 +1,4 @@
+{% load contract_filters %}
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -76,20 +77,20 @@
     <!-- 1. QUALIFICAÇÃO -->
     <p>
         <b>NESTE ATO denominada LOCADORA:</b> {{ contract.locadora_nome }}, nacionalidade brasileira,
-        CPF: {{ contract.locadora_cpf }}, RG: {{ contract.locadora_rg }},
+        CPF: {{ contract.locadora_cpf|format_cpf }}, RG: {{ contract.locadora_rg }},
         residente e domiciliada no endereço: {{ contract.locadora_endereco }}.
     </p>
 
     <p>
         <b>OUTRO LADO, denominado(a) LOCATÁRIO(A):</b> {{ contract.tenant_name }}, nacionalidade BRASILEIRA,
-        CPF: {{ contract.tenant_cpf }}, RG: {{ contract.tenant_rg }}.
+        CPF: {{ contract.tenant_cpf|format_cpf }}, RG: {{ contract.tenant_rg }}.
         Profissão: {{ contract.tenant_profession }}.
         Endereço anterior: {{ contract.tenant_prev_address }}.
     </p>
 
     <p>
         O imóvel de propriedade da LOCADORA situa-se no endereço: {{ contract.property_address }},
-        CEP: {{ contract.property_cep }}. O prazo de locação do imóvel mencionado acima terá validade de <b>
+        CEP: {{ contract.property_cep|format_cep }}. O prazo de locação do imóvel mencionado acima terá validade de <b>
             {% if contract.contract_type == 'TIPICO' %}
             30 (trinta) meses
             {% else %}
@@ -100,7 +101,8 @@
 
     {% if contract.contract_type == 'ATIPICO' %}
     <p>
-        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
+        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{
+        contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
     </p>
     {% endif %}
 
@@ -126,7 +128,8 @@
 
     {% if contract.maintenance_fee > 0 %}
     <p>
-        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{
+            contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
     </p>
     {% endif %}
 
@@ -289,13 +292,13 @@
     <div class="signature-block">
         <div class="signature-line"></div>
         <p>{{ contract.testemunha1_name|default:'Testemunha 1' }}</p>
-        <p>CPF: {{ contract.testemunha1_cpf }}</p>
+        <p>CPF: {{ contract.testemunha1_cpf|format_cpf }}</p>
     </div>
 
     <div class="signature-block">
         <div class="signature-line"></div>
         <p>{{ contract.testemunha2_name|default:'Testemunha 2' }}</p>
-        <p>CPF: {{ contract.testemunha2_cpf }}</p>
+        <p>CPF: {{ contract.testemunha2_cpf|format_cpf }}</p>
     </div>
 
     <!-- Page Break for Anexo -->

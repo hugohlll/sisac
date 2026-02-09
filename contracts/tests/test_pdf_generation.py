@@ -8,25 +8,25 @@ class ContractPDFTest(TestCase):
     def setUp(self):
         self.contract = Contract.objects.create(
             locadora_nome="Maria Silva",
-            locadora_cpf="123.456.789-00",
+            locadora_cpf="12345678900",  # Unformatted
             locadora_rg="12.345.678-9",
             locadora_endereco="Rua A, 123",
             tenant_name="João Souza",
-            tenant_cpf="987.654.321-00",
+            tenant_cpf="98765432100",    # Unformatted
             tenant_rg="98.765.432-1",
             tenant_profession="Engenheiro",
             tenant_prev_address="Rua B, 456",
             property_address="Rua C, 789",
-            property_cep="12345-678",
+            property_cep="12345678",     # Unformatted
             monthly_value=2000.00,
             payment_day=5,
             start_date=datetime.date(2026, 2, 10),
             duration_months=30,
             contract_type='TIPICO',
             testemunha1_name="Testemunha Um",
-            testemunha1_cpf="111.111.111-11",
+            testemunha1_cpf="11111111111", # Unformatted
             testemunha2_name="Testemunha Dois",
-            testemunha2_cpf="222.222.222-22",
+            testemunha2_cpf="22222222222", # Unformatted
             signature_city="São Paulo"
         )
 
@@ -65,9 +65,9 @@ class ContractPDFTest(TestCase):
         self.assertTrue("fevereiro" in html_content.lower())
         
         # Verify that other variables are rendered
-        self.assertIn("123.456.789-00", html_content) # locadora_cpf
-        self.assertIn("987.654.321-00", html_content) # tenant_cpf
-        self.assertIn("12345-678", html_content) # property_cep
+        self.assertIn("123.456.789-00", html_content) # locadora_cpf formatted
+        self.assertIn("987.654.321-00", html_content) # tenant_cpf formatted
+        self.assertIn("12.345-678", html_content) # property_cep formatted (12345-678 input -> 12.345-678 rendered)
         
         # Verify NO raw tags remain
         self.assertNotIn("{{", html_content)
