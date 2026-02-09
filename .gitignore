@@ -41,3 +41,11 @@ TEMPL.md
 # Temporary / Scripts
 fix_template_v2.py
 test_sync.txt
+
+# Node.js
+node_modules/
+.temp-execution-*.js
+
+
+# Agent
+.agent/
