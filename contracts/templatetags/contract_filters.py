@@ -14,10 +14,12 @@ def format_cpf(value):
     
     digits = re.sub(r'\D', '', str(value))
     
-    if len(digits) != 11:
-        return value # Return original if not 11 digits
+    if len(digits) >= 11:
+        # Take the first 11 digits if longer
+        cpf = digits[:11]
+        return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
         
-    return f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:]}"
+    return value # Return original if not enough digits
 
 @register.filter
 def format_cep(value):

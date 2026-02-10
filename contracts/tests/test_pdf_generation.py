@@ -41,8 +41,7 @@ class ContractPDFTest(TestCase):
         """
         context = {
             'contract': self.contract,
-            'deposit_p1': 0,
-            'deposit_p2': 0,
+
             # Force a specific date to test formatting
             'data_assinatura': datetime.date(2026, 2, 8), 
         }
@@ -82,3 +81,16 @@ class ContractPDFTest(TestCase):
         # Verify NO raw tags remain
         self.assertNotIn("{{", html_content)
         self.assertNotIn("}}", html_content)
+
+    def test_cpf_formatting_extra_digits(self):
+        """
+        Test if CPF with more than 11 digits is correctly formatted (first 11 used).
+        """
+        self.contract.locadora_cpf = "0251487525012" # 13 digits
+        self.contract.save()
+        
+        context = {'contract': self.contract, 'data_assinatura': datetime.date(2026, 2, 8)}
+        html_content = render_to_string('contracts/pdf_template.html', context)
+        
+        # Expect 025.148.752-50
+        self.assertIn("025.148.752-50", html_content)
