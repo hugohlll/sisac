@@ -59,7 +59,7 @@ class Contract(models.Model):
         ('FIXO', 'Valor Fixo'),
     ]
     water_billing_type = models.CharField(max_length=20, choices=WATER_BILLING_CHOICES, verbose_name="Cobrança de Água")
-    water_description = models.CharField(max_length=255, verbose_name="Descrição Água", blank=True)
+    water_fixed_value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Valor Fixo Água")
     
     POWER_BILLING_CHOICES = [
         ('INCLUSO', 'Incluso no Aluguel'),
@@ -67,7 +67,7 @@ class Contract(models.Model):
         ('CONTA', 'Conta Individual'),
     ]
     power_billing_type = models.CharField(max_length=20, choices=POWER_BILLING_CHOICES, verbose_name="Cobrança de Energia")
-    power_description = models.CharField(max_length=255, verbose_name="Descrição Energia", blank=True)
+    power_fixed_value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Valor Fixo Energia")
     
     testemunha1_name = models.CharField(max_length=255, verbose_name="Nome Testemunha 1", default="")
     testemunha1_cpf = models.CharField(max_length=14, verbose_name="CPF Testemunha 1")

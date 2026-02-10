@@ -211,21 +211,26 @@
                             {% for code, label in form.water_billing_type.field.choices %}
                             {% if code %}
                             <label class="inline-flex items-center">
-                                <input type="radio" name="water_billing_type" value="{{ code }}" class="form-radio text-blue-600" {% if form.water_billing_type.value == code %}checked{% endif %} required onchange="toggleDescription('water', this.value)">
+                                <input type="radio" name="water_billing_type" value="{{ code }}"
+                                    class="form-radio text-blue-600" {% if form.water_billing_type.value == code %}checked{% endif %} required onchange="toggleValueField('water', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
                             {% endfor %}
                         </div>
 
-                        <div id="water_description_container"
+                        <div id="water_value_container"
                             class="mt-2 {% if form.water_billing_type.value != 'FIXO' %}opacity-50{% endif %}">
-                            <label class="block text-sm text-gray-600 mb-1">Descrição Água (Habilitado apenas para Valor
-                                Fixo)</label>
-                            <input type="text" name="water_description" id="water_description"
-                                value="{{ form.water_description.value|default:'' }}"
-                                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                {% if form.water_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                            <label class="block text-sm text-gray-600 mb-1">Valor Fixo Água (Habilitado apenas para
+                                Valor Fixo)</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">R$</span>
+                                <input type="text" name="water_fixed_value" id="water_fixed_value"
+                                    value="{{ form.water_fixed_value.value|default:'' }}"
+                                    class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
+                                    placeholder="0,00" {% if form.water_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                            </div>
                         </div>
                     </div>
 
@@ -236,21 +241,26 @@
                             {% for code, label in form.power_billing_type.field.choices %}
                             {% if code %}
                             <label class="inline-flex items-center">
-                                <input type="radio" name="power_billing_type" value="{{ code }}" class="form-radio text-blue-600" {% if form.power_billing_type.value == code %}checked{% endif %} required onchange="toggleDescription('power', this.value)">
+                                <input type="radio" name="power_billing_type" value="{{ code }}"
+                                    class="form-radio text-blue-600" {% if form.power_billing_type.value == code %}checked{% endif %} required onchange="toggleValueField('power', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
                             {% endfor %}
                         </div>
 
-                        <div id="power_description_container"
+                        <div id="power_value_container"
                             class="mt-2 {% if form.power_billing_type.value != 'FIXO' %}opacity-50{% endif %}">
-                            <label class="block text-sm text-gray-600 mb-1">Descrição Energia (Habilitado apenas para
+                            <label class="block text-sm text-gray-600 mb-1">Valor Fixo Energia (Habilitado apenas para
                                 Valor Fixo)</label>
-                            <input type="text" name="power_description" id="power_description"
-                                value="{{ form.power_description.value|default:'' }}"
-                                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                {% if form.power_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">R$</span>
+                                <input type="text" name="power_fixed_value" id="power_fixed_value"
+                                    value="{{ form.power_fixed_value.value|default:'' }}"
+                                    class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
+                                    placeholder="0,00" {% if form.power_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -312,9 +322,33 @@
 </div>
 
 <script>
-    function toggleDescription(type, value) {
-        const inputId = type + '_description';
-        const containerId = type + '_description_container';
+    // Formata número para moeda brasileira (1234.56 -> 1.234,56)
+    function formatCurrency(value) {
+        // Remove tudo exceto números
+        let digits = value.replace(/\D/g, '');
+        if (digits === '') return '';
+
+        // Converte para centavos (adiciona zeros à esquerda se necessário)
+        let cents = parseInt(digits, 10);
+        let reais = (cents / 100).toFixed(2);
+
+        // Formata com separador de milhar e vírgula para decimais
+        let parts = reais.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return parts.join(',');
+    }
+
+    // Aplica máscara de moeda ao digitar
+    function applyCurrencyMask(input) {
+        input.addEventListener('input', function (e) {
+            let formatted = formatCurrency(this.value);
+            this.value = formatted;
+        });
+    }
+
+    function toggleValueField(type, value) {
+        const inputId = type + '_fixed_value';
+        const containerId = type + '_value_container';
         const input = document.getElementById(inputId);
         const container = document.getElementById(containerId);
 
@@ -324,18 +358,26 @@
             input.focus();
         } else {
             input.disabled = true;
-            input.value = ''; // Limpa o valor se não for fixo
+            input.value = '';
             container.classList.add('opacity-50');
         }
     }
 
-    // Inicializa o estado ao carregar a página (caso haja erro de validação e o form retorne)
+    // Inicializa ao carregar a página
     document.addEventListener('DOMContentLoaded', function () {
+        // Aplica máscara de moeda nos campos
+        const waterInput = document.getElementById('water_fixed_value');
+        const powerInput = document.getElementById('power_fixed_value');
+
+        if (waterInput) applyCurrencyMask(waterInput);
+        if (powerInput) applyCurrencyMask(powerInput);
+
+        // Inicializa estado dos campos
         const waterValue = document.querySelector('input[name="water_billing_type"]:checked')?.value;
-        if (waterValue) toggleDescription('water', waterValue);
+        if (waterValue) toggleValueField('water', waterValue);
 
         const powerValue = document.querySelector('input[name="power_billing_type"]:checked')?.value;
-        if (powerValue) toggleDescription('power', powerValue);
+        if (powerValue) toggleValueField('power', powerValue);
     });
 </script>
 {% endblock %}

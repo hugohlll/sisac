@@ -101,8 +101,7 @@
 
     {% if contract.contract_type == 'ATIPICO' %}
     <p>
-        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{
-        contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
+        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
     </p>
     {% endif %}
 
@@ -133,7 +132,8 @@
     {% endif %}
 
     <p>
-        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de aluguel.
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
+        aluguel.
         {% if contract.security_deposit_payment_type == 'VISTA' %}
         O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
         {% else %}
@@ -158,32 +158,23 @@
 
     <!-- 3. CLÁUSULAS GERAIS -->
 
-    {% if contract.water_billing_type == 'INCLUSO' and contract.power_billing_type == 'INCLUSO' %}
     <p>
-        Não haverá cobrança de taxa referente à cota de consumo de água ou energia elétrica por parte da LOCADORA,
-        estando estes itens inclusos no valor do aluguel.
+        Em relação aos serviços de utilidade pública, fica ajustado que: (a) o consumo de água e esgoto
+        {% if contract.water_billing_type == 'FIXO' %}
+        será cobrado mediante taxa fixa mensal de <b>R$ {{ contract.water_fixed_value|floatformat:2 }}</b>
+        {% else %}
+        está incluso no valor do aluguel
+        {% endif %};
+        (b) a energia elétrica
+        {% if contract.power_billing_type == 'FIXO' %}
+        será cobrada mediante taxa fixa mensal de <b>R$ {{ contract.power_fixed_value|floatformat:2 }}</b>
+        {% elif contract.power_billing_type == 'CONTA' %}
+        será de responsabilidade integral do(a) LOCATÁRIO(A) (conta individual)
+        {% else %}
+        está inclusa no valor do aluguel
+        {% endif %}.
+        Não haverá cobrança de cota condominial.
     </p>
-    {% else %}
-    <p>
-        Os valores de serviços de utilidade pública serão cobrados da seguinte forma: o(a) LOCATÁRIO(A) pagará à
-        LOCADORA
-
-        <!-- Água -->
-        {% if contract.water_billing_type == 'FIXO' %} um valor fixo referente à água e esgoto{% endif %}
-        {% if contract.water_billing_type == 'INCLUSO' %} (água inclusa){% endif %}
-        , e
-
-        <!-- Energia -->
-        {% if contract.power_billing_type == 'FIXO' %} um valor fixo referente à energia elétrica{% endif %}
-        {% if contract.power_billing_type == 'CONTA' %} o valor integral da fatura de energia elétrica{% endif %}
-        {% if contract.power_billing_type == 'INCLUSO' %} (energia inclusa){% endif %}
-        .
-
-        {% if contract.water_description %} Detalhes Água: {{ contract.water_description }}.{% endif %}
-        {% if contract.power_description %} Detalhes Energia: {{ contract.power_description }}.{% endif %}
-        Não haverá cobrança referente a cota condominial.
-    </p>
-    {% endif %}
 
     <p>
         Não será permitido nenhum uso de aparelho elétrico que contenha resistência. O descumprimento dessa cláusula

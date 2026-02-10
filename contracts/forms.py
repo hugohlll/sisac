@@ -6,6 +6,9 @@ class ContractForm(forms.ModelForm):
     class Meta:
         model = Contract
         fields = '__all__'
+
+    water_fixed_value = forms.CharField(required=False)
+    power_fixed_value = forms.CharField(required=False)
     
     def clean_field_helper(self, field_name):
         data = self.cleaned_data.get(field_name)
@@ -58,3 +61,25 @@ class ContractForm(forms.ModelForm):
 
     def clean_testemunha2_name(self):
         return self.clean_name_helper('testemunha2_name')
+
+    def clean_currency_field(self, field_name):
+        """Convert Brazilian currency format (1.234,56) to Decimal (1234.56)"""
+        data = self.cleaned_data.get(field_name)
+        if data is None or data == '':
+            return None
+        if isinstance(data, (int, float)):
+            return data
+        # Remove R$ prefix if present, thousand separators, and convert comma to dot
+        cleaned = str(data).replace('R$', '').replace(' ', '').replace('.', '').replace(',', '.')
+        try:
+            from decimal import Decimal
+            return Decimal(cleaned)
+        except:
+            return None
+
+    def clean_water_fixed_value(self):
+        return self.clean_currency_field('water_fixed_value')
+
+    def clean_power_fixed_value(self):
+        return self.clean_currency_field('power_fixed_value')
+

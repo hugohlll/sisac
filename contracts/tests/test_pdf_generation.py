@@ -27,7 +27,11 @@ class ContractPDFTest(TestCase):
             testemunha1_cpf="11111111111", # Unformatted
             testemunha2_name="Testemunha Dois",
             testemunha2_cpf="22222222222", # Unformatted
-            signature_city="São Paulo"
+            signature_city="São Paulo",
+            water_billing_type='FIXO',
+            water_fixed_value=123.45,
+            power_billing_type='FIXO',
+            power_fixed_value=678.90
         )
 
     def test_pdf_content_rendering(self):
@@ -68,6 +72,12 @@ class ContractPDFTest(TestCase):
         self.assertIn("123.456.789-00", html_content) # locadora_cpf formatted
         self.assertIn("987.654.321-00", html_content) # tenant_cpf formatted
         self.assertIn("12.345-678", html_content) # property_cep formatted (12345-678 input -> 12.345-678 rendered)
+
+        # Check currency formatting for water and energy
+        # 123.45 -> 123,45
+        self.assertIn("R$ 123,45", html_content)
+        # 678.90 -> 678,90
+        self.assertIn("R$ 678,90", html_content)
         
         # Verify NO raw tags remain
         self.assertNotIn("{{", html_content)
