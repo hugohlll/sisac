@@ -1,7 +1,7 @@
 import pytest
 from decimal import Decimal
 from datetime import date
-from contracts.services.calculator import calculate_termination_fine, calculate_deposit_installments
+from contracts.services.calculator import calculate_termination_fine
 from contracts.models import Contract
 
 @pytest.fixture
@@ -39,8 +39,4 @@ def test_fine_before_12_months(typical_contract):
     
     assert fine == expected_fine.quantize(Decimal('0.01'))
 
-def test_deposit_installments():
-    rent = Decimal('1000.00')
-    p1, p2 = calculate_deposit_installments(rent)
-    assert p1 == Decimal('1500.00')
-    assert p2 == Decimal('500.00')
+

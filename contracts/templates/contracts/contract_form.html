@@ -2,7 +2,25 @@
 
 {% block content %}
 <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Emitir Novo Contrato</h2>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
+        {% if contract %}Editar Contrato: {{ contract.tenant_name }}{% else %}Emitir Novo Contrato{% endif %}
+    </h2>
+
+    {% if contract.documents.exists %}
+    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+        <h3 class="font-bold text-gray-700 mb-2">Documentos do Inquilino (Solicitação Online):</h3>
+        <ul class="list-disc pl-5">
+            {% for doc in contract.documents.all %}
+            <li>
+                <a href="{% url 'serve-document' doc.pk %}" target="_blank" class="text-blue-600 hover:underline">
+                    Abrir Documento {{ forloop.counter }}
+                </a>
+                <span class="text-gray-500 text-sm">({{ doc.uploaded_at|date:"d/m/Y H:i" }})</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
     <form method="post" class="space-y-6">
         {% csrf_token %}
@@ -186,7 +204,6 @@
                         <select name="security_deposit_payment_type"
                             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="VISTA">À Vista</option>
-                            <option value="PARCELADO">Parcelado (1.5x + 0.5x)</option>
                         </select>
                     </div>
                 </div>
@@ -212,7 +229,7 @@
                             {% if code %}
                             <label class="inline-flex items-center">
                                 <input type="radio" name="water_billing_type" value="{{ code }}"
-                                    class="form-radio text-blue-600" {% if form.water_billing_type.value == code %}checked{% endif %} required onchange="toggleValueField('water', this.value)">
+                                    class="form-radio text-blue-600" required onchange="toggleValueField('water', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
@@ -229,7 +246,7 @@
                                 <input type="text" name="water_fixed_value" id="water_fixed_value"
                                     value="{{ form.water_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.water_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                                    placeholder="0,00" {% if form.water_billing_type.value  != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -242,7 +259,7 @@
                             {% if code %}
                             <label class="inline-flex items-center">
                                 <input type="radio" name="power_billing_type" value="{{ code }}"
-                                    class="form-radio text-blue-600" {% if form.power_billing_type.value == code %}checked{% endif %} required onchange="toggleValueField('power', this.value)">
+                                    class="form-radio text-blue-600" required onchange="toggleValueField('power', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
@@ -259,7 +276,7 @@
                                 <input type="text" name="power_fixed_value" id="power_fixed_value"
                                     value="{{ form.power_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.power_billing_type.value != 'FIXO' %}disabled{% endif %}>
+                                    placeholder="0,00" {% if form.power_billing_type.value  != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>

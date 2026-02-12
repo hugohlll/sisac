@@ -4,11 +4,23 @@ import uuid
 class Contract(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendente de Análise'),
+        ('APPROVED', 'Aprovado/Finalizado'),
+        ('REJECTED', 'Rejeitado'),
+    ]
+    status = models.CharField(
+        max_length=10, 
+        choices=STATUS_CHOICES, 
+        default='PENDING',
+        verbose_name="Status"
+    )
+    
     # Dados da Locadora
-    locadora_nome = models.CharField(max_length=255, verbose_name="Nome da Locadora")
-    locadora_cpf = models.CharField(max_length=14, verbose_name="CPF da Locadora")
-    locadora_rg = models.CharField(max_length=20, verbose_name="RG da Locadora")
-    locadora_endereco = models.CharField(max_length=255, verbose_name="Endereço da Locadora")
+    locadora_nome = models.CharField(max_length=255, verbose_name="Nome da Locadora", null=True, blank=True)
+    locadora_cpf = models.CharField(max_length=14, verbose_name="CPF da Locadora", null=True, blank=True)
+    locadora_rg = models.CharField(max_length=20, verbose_name="RG da Locadora", null=True, blank=True)
+    locadora_endereco = models.CharField(max_length=255, verbose_name="Endereço da Locadora", null=True, blank=True)
     
     # Dados do Locatário
     tenant_name = models.CharField(max_length=255, verbose_name="Nome do Locatário")
@@ -18,13 +30,13 @@ class Contract(models.Model):
     tenant_prev_address = models.TextField(verbose_name="Endereço Anterior do Locatário")
     
     # Dados do Imóvel
-    property_address = models.TextField(verbose_name="Endereço do Imóvel")
-    property_cep = models.CharField(max_length=9, verbose_name="CEP do Imóvel")
+    property_address = models.TextField(verbose_name="Endereço do Imóvel", null=True, blank=True)
+    property_cep = models.CharField(max_length=9, verbose_name="CEP do Imóvel", null=True, blank=True)
     
     # Financeiro e Prazos
-    monthly_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Mensal")
+    monthly_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor Mensal", null=True, blank=True)
     payment_day = models.PositiveIntegerField(default=10, verbose_name="Dia do Pagamento")
-    start_date = models.DateField(verbose_name="Data de Início")
+    start_date = models.DateField(verbose_name="Data de Início", null=True, blank=True)
     duration_months = models.PositiveIntegerField(default=30, verbose_name="Duração em Meses")
     
     CONTRACT_TYPE_CHOICES = [
@@ -43,11 +55,11 @@ class Contract(models.Model):
     
     PAYMENT_TYPE_CHOICES = [
         ('VISTA', 'À Vista'),
-        ('PARCELADO', 'Parcelado'),
     ]
     security_deposit_payment_type = models.CharField(
         max_length=20, 
         choices=PAYMENT_TYPE_CHOICES,
+        default='VISTA',
         verbose_name="Forma de Pagamento da Caução"
     )
     
@@ -84,3 +96,15 @@ class Contract(models.Model):
 
     def __str__(self):
         return f"Contrato {self.id} - {self.tenant_name}"
+
+class ContractDocument(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='documents')
+    
+    file = models.FileField(
+        upload_to='contract_docs/',
+        verbose_name="Arquivo"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Doc {self.id} - {self.contract.tenant_name}"

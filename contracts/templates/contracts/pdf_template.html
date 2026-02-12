@@ -101,7 +101,7 @@
 
     {% if contract.contract_type == 'ATIPICO' %}
     <p>
-        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
+        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a  {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
     </p>
     {% endif %}
 
@@ -127,22 +127,14 @@
 
     {% if contract.maintenance_fee > 0 %}
     <p>
-        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$  {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
     </p>
     {% endif %}
 
     <p>
-        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$  {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
         aluguel.
-        {% if contract.security_deposit_payment_type == 'VISTA' %}
         O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
-        {% else %}
-        O pagamento será realizado da seguinte forma:<br />
-        a) O valor correspondente a 1,5 (um e meio) aluguel (R$ {{ deposit_p1 }}) será pago no ato da assinatura deste
-        contrato, a título de primeira parcela da caução.<br />
-        b) O valor restante de 0,5 (meio) aluguel (R$ {{ deposit_p2 }}) será pago juntamente com a mensalidade do
-        segundo mês de vigência do contrato, quitando o total da garantia.
-        {% endif %}
     </p>
 
     <p>
@@ -158,6 +150,7 @@
 
     <!-- 3. CLÁUSULAS GERAIS -->
 
+    <h3>Titularidade e Serviços de Utilidade Pública</h3>
     <p>
         Em relação aos serviços de utilidade pública, fica ajustado que: (a) o consumo de água e esgoto
         {% if contract.water_billing_type == 'FIXO' %}
@@ -181,21 +174,14 @@
         acarretará à uma multa de 1 aluguel e/ou cancelamento do contrato.
     </p>
 
-    {% if contract.contract_type == 'TIPICO' %}
+
     <p>
         É garantida a locação pelo prazo mínimo de 12 (doze) meses. A rescisão antes deste período implica em multa
         equivalente a 1 (um) aluguel multiplicado pelos meses faltantes para completar os 12 meses, calculada de forma
         proporcional (pro rata die). Após 12 meses, a rescisão é isenta de multa mediante aviso prévio de 30 (trinta)
         dias.
     </p>
-    {% else %}
-    <p>
-        Caso o(a) LOCATÁRIO(A) opte pela rescisão unilateral do contrato antes do término do prazo de vigência
-        estipulado, incidirá multa contratual no valor equivalente a 1 (um) mês de aluguel vigente, calculada de forma
-        proporcional ao período restante do contrato, a qual poderá ser descontada do depósito de garantia. A
-        notificação de rescisão deverá ser feita por escrito à LOCADORA com antecedência mínima de 30 (trinta) dias.
-    </p>
-    {% endif %}
+
 
     <h2>BENFEITORIAS E VISTORIAS</h2>
     <p>
@@ -219,10 +205,6 @@
         anulação automática do contrato, sem qualquer ônus para a LOCADORA.
     </p>
 
-    <h2>TITULARIDADE E SERVIÇOS DE UTILIDADE PÚBLICA</h2>
-    <p>
-        <b>Ver acima (Consolidado nas cláusulas anteriores).</b>
-    </p>
 
     <h2>REGRAS DE CONVIVÊNCIA</h2>
     <p>

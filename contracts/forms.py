@@ -1,11 +1,14 @@
 from django import forms
 from .models import Contract
+from .models import Contract
 import re
+from .validators import validate_file_size, validate_file_extension
+from django.core.exceptions import ValidationError
 
 class ContractForm(forms.ModelForm):
     class Meta:
         model = Contract
-        fields = '__all__'
+        exclude = ['status', 'created_at', 'updated_at']
 
     water_fixed_value = forms.CharField(required=False)
     power_fixed_value = forms.CharField(required=False)
@@ -82,4 +85,49 @@ class ContractForm(forms.ModelForm):
 
     def clean_power_fixed_value(self):
         return self.clean_currency_field('power_fixed_value')
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            if data:
+                result = [single_file_clean(data, initial)]
+            else:
+                result = []
+        return result
+
+class TenantSolicitationForm(ContractForm):
+    documents = MultipleFileField(
+        widget=MultipleFileInput(attrs={'multiple': True}),
+        label="Documentos (Identidade, Renda)",
+        required=False,
+        help_text="Formatos: PDF, JPG, PNG. Máx: 5MB por arquivo."
+    )
+
+    class Meta(ContractForm.Meta):
+        model = Contract
+        # Apenas campos que o inquilino preenche
+        fields = [
+            'tenant_name', 'tenant_cpf', 'tenant_rg', 
+            'tenant_profession', 'tenant_prev_address', 
+        ]
+
+    def clean_documents(self):
+        files = self.files.getlist('documents')
+        if len(files) > 5:
+            raise ValidationError("Máximo de 5 arquivos permitidos.")
+        
+        for f in files:
+            validate_file_size(f)
+            validate_file_extension(f)
+        return files
 

@@ -47,12 +47,4 @@ def calculate_termination_fine(contract, termination_date: date) -> Decimal:
     
     return fine.quantize(Decimal('0.01'))
 
-def calculate_deposit_installments(monthly_value: Decimal) -> tuple[Decimal, Decimal]:
-    """
-    Calculates the 2 installments for Security Deposit if payment_type is PARCELADO.
-    - Installment 1: 1.5 * monthly_value
-    - Installment 2: 0.5 * monthly_value
-    """
-    p1 = monthly_value * Decimal('1.5')
-    p2 = monthly_value * Decimal('0.5')
-    return p1.quantize(Decimal('0.01')), p2.quantize(Decimal('0.01'))
+
