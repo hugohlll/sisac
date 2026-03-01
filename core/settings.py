@@ -123,32 +123,18 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-from whitenoise.storage import CompressedStaticFilesStorage
-
-class CustomWhiteNoiseStorage(CompressedStaticFilesStorage):
-    manifest_strict = False
-    
-    def post_process(self, paths, dry_run=False, **options):
-        # We catch FileNotFoundError per file so a missing third-party map doesn't break everything else
-        try:
-            for name, hashed_name, processed in super().post_process(paths, dry_run, **options):
-                yield name, hashed_name, processed
-        except FileNotFoundError:
-            pass
-
-
 # Default Storages Configuration (Django 4.2+)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "core.settings.CustomWhiteNoiseStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 # Compatibility for django-cloudinary-storage with Django 5.1+
-STATICFILES_STORAGE = "core.settings.CustomWhiteNoiseStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 # Media files (Uploads)
 MEDIA_URL = '/media/'
