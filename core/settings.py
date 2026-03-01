@@ -129,12 +129,12 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "core.storage.CustomWhiteNoiseStorage",
+        "BACKEND": "whitenoise.storage.ManifestStaticFilesStorage",
     },
 }
 
 # Compatibility for django-cloudinary-storage with Django 5.1+
-STATICFILES_STORAGE = "core.storage.CustomWhiteNoiseStorage"
+STATICFILES_STORAGE = "whitenoise.storage.ManifestStaticFilesStorage"
 
 # Media files (Uploads)
 MEDIA_URL = '/media/'
