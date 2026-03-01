@@ -72,6 +72,8 @@ def generate_pdf(request, pk):
     contract = get_object_or_404(Contract, pk=pk)
     
     import urllib.request
+    import io
+    from PIL import Image
 
     # Encode inspection photos as base64 data URIs for WeasyPrint
     inspection_photos_data = []
@@ -93,10 +95,27 @@ def generate_pdf(request, pk):
             if not data:
                 continue
 
-            # Detect content type
-            ext = photo.photo.name.rsplit('.', 1)[-1].lower()
-            content_type = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png'}.get(ext, 'image/jpeg')
-            
+            # Resize image to prevent WeasyPrint memory timeout (SIGKILL) on Render
+            try:
+                img = Image.open(io.BytesIO(data))
+                # Convert to RGB to avoid issues with RGBA/PNG having transparent backgrounds when saving as JPEG
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+                
+                # Resize proportionally respecting 1024x1024 max boundaries
+                img.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
+                
+                output = io.BytesIO()
+                # Compress with standard JPEG 75 quality to shrink base64 string size dramatically
+                img.save(output, format='JPEG', quality=75)
+                data = output.getvalue()
+                content_type = 'image/jpeg'
+            except Exception as e:
+                print(f"Error compressing photo {photo.id}: {e}")
+                # Fallback to original content type detection if PIL fails
+                ext = photo.photo.name.rsplit('.', 1)[-1].lower()
+                content_type = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png'}.get(ext, 'image/jpeg')
+
             b64 = base64.b64encode(data).decode('utf-8')
             data_uri = f'data:{content_type};base64,{b64}'
             
