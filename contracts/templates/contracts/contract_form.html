@@ -22,6 +22,39 @@
     </div>
     {% endif %}
 
+    {% if contract %}
+    <div class="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-gray-700 flex items-center">
+                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Fotos de Vistoria de Entrada ({{ contract.inspection_photos.count }})
+            </h3>
+            <a href="{% url 'inspection-photos' contract.pk %}" target="_blank"
+                class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar Fotos
+            </a>
+        </div>
+        {% if contract.inspection_photos.exists %}
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            {% for photo in contract.inspection_photos.all %}
+            <a href="{{ photo.photo.url }}" target="_blank"
+                class="block rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-green-200">
+                <img src="{{ photo.photo.url }}" alt="Vistoria {{ forloop.counter }}" class="w-full h-20 object-cover">
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-500 italic">Nenhuma foto de vistoria enviada ainda.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <form method="post" class="space-y-6">
         {% csrf_token %}
 
@@ -229,7 +262,8 @@
                             {% if code %}
                             <label class="inline-flex items-center">
                                 <input type="radio" name="water_billing_type" value="{{ code }}"
-                                    class="form-radio text-blue-600" required onchange="toggleValueField('water', this.value)">
+                                    class="form-radio text-blue-600" required
+                                    onchange="toggleValueField('water', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
@@ -246,7 +280,7 @@
                                 <input type="text" name="water_fixed_value" id="water_fixed_value"
                                     value="{{ form.water_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.water_billing_type.value  != "FIXO" %}disabled{% endif %}>
+                                    placeholder="0,00" {% if form.water_billing_type.value != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -259,7 +293,8 @@
                             {% if code %}
                             <label class="inline-flex items-center">
                                 <input type="radio" name="power_billing_type" value="{{ code }}"
-                                    class="form-radio text-blue-600" required onchange="toggleValueField('power', this.value)">
+                                    class="form-radio text-blue-600" required
+                                    onchange="toggleValueField('power', this.value)">
                                 <span class="ml-2">{{ label }}</span>
                             </label>
                             {% endif %}
@@ -276,7 +311,7 @@
                                 <input type="text" name="power_fixed_value" id="power_fixed_value"
                                     value="{{ form.power_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.power_billing_type.value  != "FIXO" %}disabled{% endif %}>
+                                    placeholder="0,00" {% if form.power_billing_type.value != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>

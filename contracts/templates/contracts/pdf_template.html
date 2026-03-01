@@ -101,7 +101,7 @@
 
     {% if contract.contract_type == 'ATIPICO' %}
     <p>
-        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a  {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
+        O presente contrato é celebrado com prazo inferior a 30 (trinta) meses em razão de se destinar a {{ contract.justification_atipico }}, em conformidade com o disposto na legislação aplicável.
     </p>
     {% endif %}
 
@@ -127,12 +127,12 @@
 
     {% if contract.maintenance_fee > 0 %}
     <p>
-        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$  {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
+        Adicionalmente, será cobrada uma taxa de manutenção das áreas comuns no valor fixo de <b>R$ {{ contract.maintenance_fee }}</b>, a ser paga juntamente com o aluguel mensal.
     </p>
     {% endif %}
 
     <p>
-        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$  {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
         aluguel.
         O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
     </p>
@@ -286,9 +286,33 @@
         normal.
     </p>
 
-    <p style="text-align: center; font-style: italic; margin-top: 2cm;">
-        (Fotos da Vistoria serão anexadas aqui automaticamente se disponíveis no sistema)
+    <p style="text-align: center; font-style: italic; margin-top: 1cm; margin-bottom: 2cm;">
+        (As condições detalhadas nas fotos abaixo fazem parte integrante deste documento.)
     </p>
+
+    <!-- Rendering Inspection Photos -->
+    {% if inspection_photos_data %}
+    <div style="width: 100%; text-align: center;">
+        {% for photo in inspection_photos_data %}
+        <!-- Using display: inline-block to show 2 photos per row, suitable for A4 -->
+        <div style="display: inline-block; width: 48%; margin-bottom: 20px; vertical-align: top;">
+            <img src="{{ photo.data_uri }}"
+                style="max-width: 100%; max-height: 250px; object-fit: contain; border: 1px solid #ccc;" />
+            {% if photo.description %}
+            <p style="font-size: 8pt; color: #555; margin-top: 5px;">{{ photo.description }}</p>
+            {% else %}
+            <p style="font-size: 8pt; color: #555; margin-top: 5px;">Foto {{ forloop.counter }}</p>
+            {% endif %}
+            <p style="font-size: 7pt; color: #888; margin-top: 0;">Enviada em: {{ photo.uploaded_at|date:"d/m/Y H:i" }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; font-style: italic; margin-top: 2cm;">
+        (Nenhuma foto de vistoria foi anexada a este contrato no momento da geração.)
+    </p>
+    {% endif %}
 
     <p style="margin-top: 2cm;">
         <i>(Este anexo foi aceito e assinado digitalmente/eletronicamente junto ao contrato principal.)</i>

@@ -1,8 +1,7 @@
 from django import forms
-from .models import Contract
-from .models import Contract
+from .models import Contract, InspectionPhoto
 import re
-from .validators import validate_file_size, validate_file_extension
+from .validators import validate_file_size, validate_file_extension, validate_image_extension
 from django.core.exceptions import ValidationError
 
 class ContractForm(forms.ModelForm):
@@ -131,3 +130,21 @@ class TenantSolicitationForm(ContractForm):
             validate_file_extension(f)
         return files
 
+
+class InspectionPhotoForm(forms.Form):
+    photos = MultipleFileField(
+        widget=MultipleFileInput(attrs={'multiple': True, 'accept': 'image/jpeg,image/png'}),
+        label="Fotos do Imóvel",
+        required=False,
+        help_text="Formatos: JPG, PNG. Máx: 5MB por foto. Máximo 20 fotos."
+    )
+
+    def clean_photos(self):
+        files = self.files.getlist('photos')
+        if len(files) > 20:
+            raise ValidationError("Máximo de 20 fotos permitidas.")
+        
+        for f in files:
+            validate_file_size(f)
+            validate_image_extension(f)
+        return files

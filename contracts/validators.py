@@ -11,3 +11,9 @@ def validate_file_extension(value):
     valid_extensions = ['.pdf', '.jpg', '.jpeg', '.png']
     if not ext.lower() in valid_extensions:
         raise ValidationError('Formato não suportado. Use PDF, JPG ou PNG.')
+
+def validate_image_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.jpg', '.jpeg', '.png']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError('Formato não suportado. Use JPG ou PNG.')

@@ -108,3 +108,21 @@ class ContractDocument(models.Model):
 
     def __str__(self):
         return f"Doc {self.id} - {self.contract.tenant_name}"
+
+
+class InspectionPhoto(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='inspection_photos')
+    photo = models.ImageField(
+        upload_to='inspection_photos/',
+        verbose_name="Foto de Vistoria"
+    )
+    description = models.CharField(max_length=255, blank=True, verbose_name="Descrição")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['uploaded_at']
+        verbose_name = "Foto de Vistoria"
+        verbose_name_plural = "Fotos de Vistoria"
+
+    def __str__(self):
+        return f"Foto {self.id} - {self.contract.tenant_name}"

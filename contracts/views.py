@@ -1,12 +1,14 @@
 import mimetypes
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, FileResponse
 from django.views.generic import CreateView, DetailView, TemplateView, ListView, UpdateView
-from django.urls import reverse_lazy
+from django.views import View
+from django.urls import reverse_lazy, reverse
+from django.contrib import messages
 from generator.render import render_pdf
-from .models import Contract, ContractDocument
+from .models import Contract, ContractDocument, InspectionPhoto
 
-from .forms import ContractForm, TenantSolicitationForm
+from .forms import ContractForm, TenantSolicitationForm, InspectionPhotoForm
 
 class ContractCreateView(CreateView):
     model = Contract
@@ -67,11 +69,53 @@ class SolicitationSuccessView(TemplateView):
     template_name = 'contracts/solicitation_success.html'
 
 def generate_pdf(request, pk):
+    import base64
+    import mimetypes as mt
+
     contract = get_object_or_404(Contract, pk=pk)
+    
+    import urllib.request
+
+    # Encode inspection photos as base64 data URIs for WeasyPrint
+    inspection_photos_data = []
+    for photo in contract.inspection_photos.all():
+        data = None
+        try:
+            # Se for Cloudinary (produção), o path não existe ou open() lança NotImplementedError.
+            # O mais seguro é pegar via URL se for arquivo remoto, ou path se local.
+            url = photo.photo.url
+            if url.startswith('http'):
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                with urllib.request.urlopen(req) as response:
+                    data = response.read()
+            else:
+                photo.photo.open('rb')
+                data = photo.photo.read()
+                photo.photo.close()
+            
+            if not data:
+                continue
+
+            # Detect content type
+            ext = photo.photo.name.rsplit('.', 1)[-1].lower()
+            content_type = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png'}.get(ext, 'image/jpeg')
+            
+            b64 = base64.b64encode(data).decode('utf-8')
+            data_uri = f'data:{content_type};base64,{b64}'
+            
+            inspection_photos_data.append({
+                'data_uri': data_uri,
+                'description': photo.description,
+                'uploaded_at': photo.uploaded_at,
+            })
+        except Exception as e:
+            print(f"Error loading photo {photo.id} for PDF: {e}")
+            continue
     
     context = {
         'contract': contract,
         'data_assinatura': contract.start_date,
+        'inspection_photos_data': inspection_photos_data,
     }
     
     filename = f'contrato_{contract.tenant_name}.pdf'
@@ -101,4 +145,45 @@ def serve_document(request, pk):
     response = FileResponse(doc.file, content_type=content_type)
     response['Content-Disposition'] = f'inline; filename="{doc.file.name.split("/")[-1]}"'
     return response
+
+
+class InspectionPhotoUploadView(View):
+    """Public page for landlord to upload property inspection photos."""
+    
+    def get(self, request, pk):
+        contract = get_object_or_404(Contract, pk=pk)
+        form = InspectionPhotoForm()
+        photos = contract.inspection_photos.all()
+        return render(request, 'contracts/inspection_photo_upload.html', {
+            'contract': contract,
+            'form': form,
+            'photos': photos,
+        })
+    
+    def post(self, request, pk):
+        contract = get_object_or_404(Contract, pk=pk)
+        form = InspectionPhotoForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            files = request.FILES.getlist('photos')
+            for f in files:
+                InspectionPhoto.objects.create(contract=contract, photo=f)
+            return redirect(reverse('inspection-photos', kwargs={'pk': contract.pk}))
+        
+        photos = contract.inspection_photos.all()
+        return render(request, 'contracts/inspection_photo_upload.html', {
+            'contract': contract,
+            'form': form,
+            'photos': photos,
+        })
+
+
+def delete_inspection_photo(request, pk):
+    """Delete an inspection photo (POST only)."""
+    photo = get_object_or_404(InspectionPhoto, pk=pk)
+    contract_pk = photo.contract.pk
+    if request.method == 'POST':
+        photo.photo.delete(save=False)
+        photo.delete()
+    return redirect(reverse('inspection-photos', kwargs={'pk': contract_pk}))
 
