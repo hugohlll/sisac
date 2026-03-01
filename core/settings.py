@@ -133,6 +133,9 @@ STORAGES = {
     },
 }
 
+# Compatibility for django-cloudinary-storage with Django 5.1+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Media files (Uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
