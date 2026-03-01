@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
     'cloudinary',
 ]
 
@@ -120,7 +120,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default Storages Configuration (Django 4.2+)
@@ -129,12 +129,12 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
-# Compatibility for django-cloudinary-storage with Django 5.1+
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# This prevents FileNotFoundError during collectstatic on Render
+WHITENOISE_MANIFEST_STRICT = False
 
 # Media files (Uploads)
 MEDIA_URL = '/media/'
