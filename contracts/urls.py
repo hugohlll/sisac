@@ -12,8 +12,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path('', ContractCreateView.as_view(), name='contract-create'),
-    path('list/', ContractListView.as_view(), name='contract-list'),
+    path('novo/', ContractCreateView.as_view(), name='contract-create'),
+    path('', ContractListView.as_view(), name='contract-list'),
     path('edit/<uuid:pk>/', ContractUpdateView.as_view(), name='contract-edit'),
     path('documento/<int:pk>/', serve_document, name='serve-document'),
     path('solicitar/', PublicSolicitationCreateView.as_view(), name='public-solicitation'),
