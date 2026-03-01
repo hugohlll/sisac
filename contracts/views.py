@@ -5,12 +5,14 @@ from django.views.generic import CreateView, DetailView, TemplateView, ListView,
 from django.views import View
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from generator.render import render_pdf
 from .models import Contract, ContractDocument, InspectionPhoto
 
 from .forms import ContractForm, TenantSolicitationForm, InspectionPhotoForm
 
-class ContractCreateView(CreateView):
+class ContractCreateView(LoginRequiredMixin, CreateView):
     model = Contract
     form_class = ContractForm
     template_name = 'contracts/contract_form.html'
@@ -18,7 +20,7 @@ class ContractCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('contract-pdf', kwargs={'pk': self.object.pk})
 
-class ContractListView(ListView):
+class ContractListView(LoginRequiredMixin, ListView):
     model = Contract
     template_name = 'contracts/contract_list.html'
     context_object_name = 'contracts'
@@ -30,7 +32,7 @@ class ContractListView(ListView):
         # Mas PENDING é o foco. Vamos fazer simples: PENDING primeiro, depois created_at desc.
         return Contract.objects.order_by('-status', '-created_at')
 
-class ContractUpdateView(UpdateView):
+class ContractUpdateView(LoginRequiredMixin, UpdateView):
     model = Contract
     form_class = ContractForm
     template_name = 'contracts/contract_form.html'
@@ -68,6 +70,7 @@ class PublicSolicitationCreateView(CreateView):
 class SolicitationSuccessView(TemplateView):
     template_name = 'contracts/solicitation_success.html'
 
+@login_required
 def generate_pdf(request, pk):
     import base64
     import mimetypes as mt
@@ -122,6 +125,7 @@ def generate_pdf(request, pk):
     return render_pdf('contracts/pdf_template.html', context, filename, request.build_absolute_uri())
 
 
+@login_required
 def serve_document(request, pk):
     """Serve a ContractDocument with the correct detected content type."""
     doc = get_object_or_404(ContractDocument, pk=pk)
@@ -147,7 +151,7 @@ def serve_document(request, pk):
     return response
 
 
-class InspectionPhotoUploadView(View):
+class InspectionPhotoUploadView(LoginRequiredMixin, View):
     """Public page for landlord to upload property inspection photos."""
     
     def get(self, request, pk):
@@ -178,6 +182,7 @@ class InspectionPhotoUploadView(View):
         })
 
 
+@login_required
 def delete_inspection_photo(request, pk):
     """Delete an inspection photo (POST only)."""
     photo = get_object_or_404(InspectionPhoto, pk=pk)
