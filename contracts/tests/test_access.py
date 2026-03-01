@@ -20,7 +20,3 @@ class AccessControlTests(TestCase):
         response = self.client.get(reverse('contract-list'))
         self.assertRedirects(response, f"/admin/login/?next={reverse('contract-list')}")
 
-    def test_contract_create_redirects_to_login(self):
-        """Test that the contract creation view redirects to admin login if not authenticated."""
-        response = self.client.get(reverse('contract-create'))
-        self.assertRedirects(response, f"/admin/login/?next={reverse('contract-create')}")

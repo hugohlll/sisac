@@ -12,13 +12,7 @@ from .models import Contract, ContractDocument, InspectionPhoto
 
 from .forms import ContractForm, TenantSolicitationForm, InspectionPhotoForm
 
-class ContractCreateView(LoginRequiredMixin, CreateView):
-    model = Contract
-    form_class = ContractForm
-    template_name = 'contracts/contract_form.html'
-    
-    def get_success_url(self):
-        return reverse_lazy('contract-pdf', kwargs={'pk': self.object.pk})
+
 
 class ContractListView(LoginRequiredMixin, ListView):
     model = Contract
