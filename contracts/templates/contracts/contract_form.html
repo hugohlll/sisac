@@ -280,8 +280,7 @@
                                 <input type="text" name="water_fixed_value" id="water_fixed_value"
                                     value="{{ form.water_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.water_billing_type.value !="FIXO" %}disabled{% endif
-                                    %}>
+                                    placeholder="0,00" {% if form.water_billing_type.value != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -312,8 +311,7 @@
                                 <input type="text" name="power_fixed_value" id="power_fixed_value"
                                     value="{{ form.power_fixed_value.value|default:'' }}"
                                     class="w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
-                                    placeholder="0,00" {% if form.power_billing_type.value !="FIXO" %}disabled{% endif
-                                    %}>
+                                    placeholder="0,00" {% if form.power_billing_type.value != "FIXO" %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>
