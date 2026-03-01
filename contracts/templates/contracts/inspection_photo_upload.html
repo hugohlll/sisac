@@ -110,13 +110,22 @@
 
                 <!-- Submit Button -->
                 <div id="submit-container" class="mt-6 hidden">
-                    <button type="submit"
+                    <button type="submit" id="submit-btn"
                         class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-md hover:shadow-lg">
-                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-5 w-5 mr-2" id="submit-icon" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
-                        Enviar Fotos
+                        <svg class="animate-spin h-5 w-5 mr-2 hidden" id="loading-icon"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span id="submit-text">Enviar Fotos</span>
                     </button>
                 </div>
             </form>
@@ -308,8 +317,67 @@
             updatePreviews();
         }
 
-        form.addEventListener('submit', function () {
-            fileInput.files = dt.files;
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent standard form submission
+
+            errorDiv.innerHTML = '';
+
+            const submitBtn = document.getElementById('submit-btn');
+            const submitIcon = document.getElementById('submit-icon');
+            const loadingIcon = document.getElementById('loading-icon');
+            const submitText = document.getElementById('submit-text');
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            submitIcon.classList.add('hidden');
+            loadingIcon.classList.remove('hidden');
+            submitText.textContent = 'Enviando...';
+
+            const formData = new FormData(form);
+
+            // Remove the native file input data to avoid duplicate/empty entries
+            formData.delete('photos');
+
+            // Append files from DataTransfer manually
+            for (let i = 0; i < dt.files.length; i++) {
+                formData.append('photos', dt.files[i]);
+            }
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // optional but good practice
+                    }
+                });
+
+                if (response.redirected) {
+                    // Success redirect
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    // Form validation errors will render HTML here with a 200 OK
+                    const html = await response.text();
+                    document.open();
+                    document.write(html);
+                    document.close();
+                } else {
+                    throw new Error('Erro na requisição.');
+                }
+            } catch (error) {
+                console.error(error);
+                const p = document.createElement('p');
+                p.textContent = "Ocorreu um erro ao enviar as fotos. Verifique sua conexão e tente novamente.";
+                errorDiv.appendChild(p);
+
+                // Reset loading state
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                submitIcon.classList.remove('hidden');
+                loadingIcon.classList.add('hidden');
+                submitText.textContent = 'Enviar Fotos';
+            }
         });
 
         // Lightbox
