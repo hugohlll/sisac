@@ -129,12 +129,13 @@ class CustomWhiteNoiseStorage(CompressedStaticFilesStorage):
     manifest_strict = False
     
     def post_process(self, paths, dry_run=False, **options):
-        # We catch FileNotFoundError that happens when WhiteNoise tries to compress 
-        # missing relative files from third-party packages like Cloudinary
+        # We catch FileNotFoundError per file so a missing third-party map doesn't break everything else
         try:
-            yield from super().post_process(paths, dry_run, **options)
+            for name, hashed_name, processed in super().post_process(paths, dry_run, **options):
+                yield name, hashed_name, processed
         except FileNotFoundError:
             pass
+
 
 # Default Storages Configuration (Django 4.2+)
 STORAGES = {
