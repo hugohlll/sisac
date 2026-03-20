@@ -11,6 +11,7 @@ class ContractForm(forms.ModelForm):
 
     water_fixed_value = forms.CharField(required=False)
     power_fixed_value = forms.CharField(required=False)
+    security_deposit_fixed_value = forms.CharField(required=False)
     
     def clean_field_helper(self, field_name):
         data = self.cleaned_data.get(field_name)
@@ -84,6 +85,22 @@ class ContractForm(forms.ModelForm):
 
     def clean_power_fixed_value(self):
         return self.clean_currency_field('power_fixed_value')
+
+    def clean_security_deposit_fixed_value(self):
+        return self.clean_currency_field('security_deposit_fixed_value')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        deposit_type = cleaned_data.get('security_deposit_type')
+        months = cleaned_data.get('security_deposit_months')
+        fixed_value = cleaned_data.get('security_deposit_fixed_value')
+
+        if deposit_type == 'PROPORCIONAL' and not months:
+            self.add_error('security_deposit_months', 'Este campo é obrigatório para a garantia proporcional.')
+        if deposit_type == 'FIXO' and not fixed_value:
+            self.add_error('security_deposit_fixed_value', 'Este campo é obrigatório para a garantia de valor fixo.')
+
+        return cleaned_data
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True

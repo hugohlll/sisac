@@ -132,8 +132,7 @@
     {% endif %}
 
     <p>
-        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit }}</b>, equivalente a {{ contract.security_deposit_months }} meses de
-        aluguel.
+        Será cobrada como garantia para retenção do imóvel um depósito caução no valor total de <b>R$ {{ contract.total_security_deposit|floatformat:2 }}</b>{% if contract.security_deposit_type == 'PROPORCIONAL' %}, equivalente a {{ contract.security_deposit_months }} meses de aluguel{% endif %}.
         O pagamento do valor integral do depósito será realizado no ato da assinatura deste contrato.
     </p>
 

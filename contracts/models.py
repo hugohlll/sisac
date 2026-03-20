@@ -51,7 +51,18 @@ class Contract(models.Model):
     justification_atipico = models.TextField(null=True, blank=True, verbose_name="Justificativa (se Atípico)")
     
     # Garantia
-    security_deposit_months = models.PositiveIntegerField(default=3, verbose_name="Meses de Caução")
+    SECURITY_DEPOSIT_TYPE_CHOICES = [
+        ('PROPORCIONAL', 'Proporcional ao Aluguel'),
+        ('FIXO', 'Valor Fixo'),
+    ]
+    security_deposit_type = models.CharField(
+        max_length=20,
+        choices=SECURITY_DEPOSIT_TYPE_CHOICES,
+        default='PROPORCIONAL',
+        verbose_name="Tipo de Cálculo da Garantia"
+    )
+    security_deposit_months = models.PositiveIntegerField(default=3, null=True, blank=True, verbose_name="Meses de Caução")
+    security_deposit_fixed_value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Valor Fixo da Garantia")
     
     PAYMENT_TYPE_CHOICES = [
         ('VISTA', 'À Vista'),
@@ -92,7 +103,9 @@ class Contract(models.Model):
 
     @property
     def total_security_deposit(self):
-        return self.monthly_value * self.security_deposit_months
+        if self.security_deposit_type == 'FIXO' and self.security_deposit_fixed_value is not None:
+            return self.security_deposit_fixed_value
+        return (self.monthly_value or 0) * self.security_deposit_months
 
     def __str__(self):
         return f"Contrato {self.id} - {self.tenant_name}"
